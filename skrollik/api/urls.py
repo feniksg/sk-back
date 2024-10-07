@@ -1,4 +1,5 @@
-from django.urls import path
+from django.urls import path, include
+from django.contrib.auth import views as auth_views  
 
 from .views import (
     AuthorizationView,
@@ -11,6 +12,8 @@ from .views import (
 
 urlpatterns = [
     path('login/', AuthorizationView.as_view(), name='login'),
+    path('api-auth/', include('rest_framework.urls')),
+
     path('register/', UserRegisterView.as_view(), name='user-register'),
     path('orders', OrderViewset.as_view({"get":"list"})),
     path('orders/', OrderViewset.as_view({"post":"create"})),

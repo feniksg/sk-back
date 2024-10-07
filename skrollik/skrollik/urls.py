@@ -20,7 +20,7 @@ schema_view = get_schema_view(
     permission_classes=(permissions.AllowAny,),
 )
 
-start_url = "api/"
+start_url = "skrollik/api/"
 
 urlpatterns = [
     path(start_url+'admin/', admin.site.urls),

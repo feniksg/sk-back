@@ -27,7 +27,8 @@ from .serializers import (
 from .models import (
     Order,
     OrderCategory,
-    OrderStatusChoices
+    OrderStatusChoices,
+    CustomUser
 )
 
 from .paginators import (
@@ -69,6 +70,8 @@ class AuthorizationView(APIView):
 
 class UserRegisterView(generics.CreateAPIView):
     serializer_class = UserRegisterSerializer
+    queryset = CustomUser.objects.all()
+    permission_classes = [permissions.AllowAny]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
