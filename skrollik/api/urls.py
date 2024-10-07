@@ -12,7 +12,6 @@ from .views import (
 
 urlpatterns = [
     path('login/', AuthorizationView.as_view(), name='login'),
-    path('api-auth/', include('rest_framework.urls')),
 
     path('register/', UserRegisterView.as_view(), name='user-register'),
     path('orders', OrderViewset.as_view({"get":"list"})),

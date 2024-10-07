@@ -9,7 +9,7 @@ from rest_framework import permissions
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="LuckyDress",
+        title="Scrollik",
         default_version='v1',
         description="...",
         terms_of_service="http://178.255.222.133:81/",

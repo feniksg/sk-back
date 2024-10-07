@@ -1,0 +1,23 @@
+version: '3'
+
+x-env: &env
+  DEBUG: 1
+
+services:
+  app:
+    image: skrollik:alpha
+    container_name: skrollik
+    working_dir: /backend
+    command: python /backend/manage.py runserver 0.0.0.0:8000
+    ports:
+      - '8037:8000'
+    volumes:
+      - ./skrollik/db:/backend/db
+      - ./skrollik/:/backend/
+    restart: always
+    environment:
+      <<: *env
+    env_file: env
+
+
+

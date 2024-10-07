@@ -46,6 +46,13 @@ SESSION_MIDDLEWARE_TOKEN = [
     'django.contrib.sessions.middleware.SessionMiddleware',
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    f'http://{MAIN_DOMEN}', 
+    f'https://{MAIN_DOMEN}', 
+    f'http://www.{MAIN_DOMEN}', 
+    f'https://www.{MAIN_DOMEN}',
+]
+
 CSRF_ALLOWED = [
     f'http://{MAIN_DOMEN}', 
     f'https://{MAIN_DOMEN}', 
@@ -77,7 +84,7 @@ WSGI_APPLICATION = 'skrollik.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'db/db.sqlite3',
     }
 }
 
@@ -132,11 +139,11 @@ REST_FRAMEWORK = {
 }
 
 # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'http')
-# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-# SECURE_SSL_REDIRECT = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = True
 
-# CSRF_COOKIE_SECURE = True
-# SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
