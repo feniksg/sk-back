@@ -1,5 +1,5 @@
 import django_filters
-from .models import Order, OrderCategory, PaymentTypeChoices
+from .models import Order, OrderCategory, PaymentTypeChoices, CustomUser
 
 class OrderFilter(django_filters.FilterSet):
     categories = django_filters.ModelMultipleChoiceFilter(
@@ -12,7 +12,20 @@ class OrderFilter(django_filters.FilterSet):
         choices=PaymentTypeChoices.choices,  # Предполагается, что это ваш класс выбора
         label='Тип оплаты'
     )
+    customer = django_filters.ModelChoiceFilter(
+        queryset=CustomUser.objects.all(),
+        to_field_name='id',
+        field_name='customer',
+        label='Заказчик', 
+    )
+    performer = django_filters.ModelChoiceFilter(
+        queryset=CustomUser.objects.all(),
+        to_field_name='id',
+        field_name='performer',
+        label='Исполнитель', 
+    )
+    
 
     class Meta:
         model = Order
-        fields = ['categories']
+        fields = ['categories', 'payment_type', 'customer', 'performer']

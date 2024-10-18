@@ -72,29 +72,56 @@ class CustomUserMinSerializer(serializers.ModelSerializer):
         fields = ['pk','name', 'surname', 'email']
 
 
+class CustomUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'name', 'surname', 'patronymic', 'phone', 'email', 'orders', 'works', 'date_joined']
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['orders'] = [OrderMinSerializer(x).data for x in instance.orders.all()]
+        rep['works'] = [OrderMinSerializer(x).data for x in instance.works.all()]
+        rep['fio'] = f'{instance.surname} {instance.name} {instance.patronymic}'
+        rep['date_joined'] = instance.date_joined.strftime("%d.%m.%Y")
+        return rep
+
 class OrderSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = Order
-        fields = ['id', 'title', 'description', 'payment', 'payment_type', 'categories', 'created_at']
+        fields = ['id', 'title', 'description', 'payment', 'status', 'payment_type', 'categories', 'created_at', 'customer', 'performer']
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['categories'] = [OrderCategorySerializer(x).data for x in instance.categories.all()]
+        rep['customer'] = CustomUserMinSerializer(instance.customer).data
+        if instance.customer:
+            rep['customer']['fio'] = f'{instance.customer.surname} {instance.customer.name}'
+        else:
+            rep['customer']['fio'] = ""
+        rep['performer'] = CustomUserMinSerializer(instance.performer).data if instance.performer else None
+        return rep
 
 class OrderMinSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = Order
-        fields = ['id', 'title', 'payment', 'payment_type', 'created_at', 'categories']
+        fields = ['id', 'title', 'payment', 'payment_type', 'created_at', 'categories', 'customer']
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
         rep['categories'] = [OrderCategorySerializer(x).data for x in instance.categories.all()]
         rep['created_at'] = instance.created_at.astimezone(TZ_MOSCOW).strftime("%H:%M %d.%m.%Y")
+        rep['customer'] = { "fio": f'{instance.customer.surname} {instance.customer.name}', 'id': instance.customer.pk}
         return rep
 
 class OrderCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderCategory
         fields = ['id', 'title']
+
+
 
     

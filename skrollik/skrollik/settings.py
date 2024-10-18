@@ -14,7 +14,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-MAIN_DOMEN = "localhost"
+MAIN_DOMAIN = "sava.meurl.ru"
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -47,19 +47,28 @@ SESSION_MIDDLEWARE_TOKEN = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    f'http://{MAIN_DOMEN}', 
-    f'https://{MAIN_DOMEN}', 
-    f'http://www.{MAIN_DOMEN}', 
-    f'https://www.{MAIN_DOMEN}',
+    f'http://{MAIN_DOMAIN}', 
+    f'https://{MAIN_DOMAIN}', 
+    f'http://www.{MAIN_DOMAIN}', 
+    f'https://www.{MAIN_DOMAIN}',
 ]
 
 CSRF_ALLOWED = [
-    f'http://{MAIN_DOMEN}', 
-    f'https://{MAIN_DOMEN}', 
-    f'http://www.{MAIN_DOMEN}', 
-    f'https://www.{MAIN_DOMEN}',
+    f'http://{MAIN_DOMAIN}', 
+    f'https://{MAIN_DOMAIN}', 
+    f'http://www.{MAIN_DOMAIN}', 
+    f'https://www.{MAIN_DOMAIN}',
     'http://localhost:3000'
     ]
+
+# CORS_ALLOWED_ORIGINS = [
+#         "http://localhost:3000",
+#         "http://127.0.0.1:8000",
+#         f'https://{MAIN_DOMAIN}',
+#         f'http://{MAIN_DOMAIN}',
+#     ]
+
+#region 
 
 ROOT_URLCONF = 'skrollik.urls'
 
@@ -109,7 +118,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = "api.CustomUser"
 
-
 LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'Europe/Moscow'
@@ -138,6 +146,8 @@ REST_FRAMEWORK = {
     ],
 }
 
+#endregion
+
 # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'http')
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = True
@@ -147,6 +157,10 @@ SESSION_COOKIE_SECURE = True
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
+
+
+#region
+
 
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
@@ -163,3 +177,5 @@ MEDIA_URL = '/media/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+#endregion

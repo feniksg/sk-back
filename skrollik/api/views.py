@@ -12,8 +12,9 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.views import APIView
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
+from rest_framework.permissions import IsAuthenticated
 
-from rest_framework.filters import OrderingFilter
+from rest_framework.filters import OrderingFilter, SearchFilter
 
 from .serializers import (
     AuthorizationSerializer,
@@ -21,7 +22,8 @@ from .serializers import (
     UserRegisterSerializer,
     OrderMinSerializer,
     OrderSerializer,
-    OrderCategorySerializer
+    OrderCategorySerializer,
+    CustomUserSerializer
 )
 
 from .models import (
@@ -80,19 +82,42 @@ class UserRegisterView(generics.CreateAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
 
-class OrderViewset(viewsets.ModelViewSet):
-    queryset = Order.objects.filter(status=OrderStatusChoices.PENDING)
+class OrderSearchListView(generics.ListAPIView):
+    queryset = Order.objects.all()
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = OrderSerializer
     pagination_class = I50ResultsSetPagination
-    filter_backends = (DjangoFilterBackend,OrderingFilter) 
+    filter_backends = (DjangoFilterBackend,OrderingFilter, SearchFilter)
+    search_fields = ['title', 'description']
     filterset_class = OrderFilter  
     ordering_fields = ['created_at', 'payment'] 
-    ordering = ['created_at']
+    ordering = ['-created_at']
+
+class OrderViewset(viewsets.ModelViewSet):
+    queryset = Order.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = OrderSerializer
+    pagination_class = I50ResultsSetPagination
+    filter_backends = (DjangoFilterBackend,OrderingFilter, SearchFilter)
+    search_fields = ['title', 'description']
+    filterset_class = OrderFilter  
+    ordering_fields = ['created_at', 'payment'] 
+    ordering = ['-created_at']
 
     def list(self, request, *args, **kwargs):
+        self.queryset = Order.objects.filter(status=OrderStatusChoices.PENDING)
         self.serializer_class = OrderMinSerializer
         return super().list(request, *args, **kwargs)
+    
+    def create(self, request, *args, **kwargs):
+        customer =  request.data.get('customer', None)
+        if not customer:
+            request.data['customer'] = request.user.pk
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 class CategoryViewset(viewsets.ModelViewSet):
     queryset = OrderCategory.objects.all()
@@ -125,4 +150,15 @@ class OrderClose(APIView):
             return Response(status=status.HTTP_403_FORBIDDEN)
         return Response(status=status.HTTP_404_NOT_FOUND)
 
+class CustomUserViewSet(viewsets.ModelViewSet):
+    queryset = CustomUser.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = CustomUserSerializer
 
+class MyInfoView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request: Request):
+        if request.user.is_anonymous:
+            return Response({"detail": "User is not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response(CustomUserMinSerializer(instance=request.user).data)
