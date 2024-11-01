@@ -4,7 +4,7 @@ from .models import Order, OrderCategory, PaymentTypeChoices, CustomUser
 class OrderFilter(django_filters.FilterSet):
     categories = django_filters.ModelMultipleChoiceFilter(
         queryset=OrderCategory.objects.all(),
-        to_field_name='id',  # Или другое поле, если нужно
+        # to_field_name='id',  # Или другое поле, если нужно
         field_name='categories',
         label='Категории'
     )
