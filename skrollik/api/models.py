@@ -97,6 +97,10 @@ class OrderCategory(models.Model):
     def __str__(self) -> str:
         return self.title
 
+    class Meta:
+        verbose_name = "Категория"
+        verbose_name_plural = "Категории"
+
 
 class Order(CreationTrackingMixin):
     title = models.CharField(
@@ -141,4 +145,8 @@ class Order(CreationTrackingMixin):
         verbose_name="Исполнитель",
         related_name="works"
     )
+
+    class Meta:
+        verbose_name = "Заказ"
+        verbose_name_plural = "Заказы"
     
